@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Run Leo">
+<meta name="theme-color" content="#0F1923">
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22Run%20Leo%22%2C%22short_name%22%3A%22Run%20Leo%22%2C%22description%22%3A%22Plan%20antrenament%2010K%20%E2%80%94%2024%20August%202026%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230F1923%22%2C%22theme_color%22%3A%22%230F1923%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2527http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2527%2520viewBox%253D%25270%25200%2520100%2520100%2527%253E%253Crect%2520width%253D%2527100%2527%2520height%253D%2527100%2527%2520rx%253D%252720%2527%2520fill%253D%2527%25230F1923%2527%252F%253E%253Ctext%2520y%253D%2527.9em%2527%2520font-size%253D%252780%2527%2520x%253D%252710%2527%253E%25F0%259F%258F%2583%253C%252Ftext%253E%253C%252Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+<title>Run Leo</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#0F1923; --card:#1A2332; --card2:#212E40; --border:#2A3A50;
+  --coral:#FF5F57; --blue:#2D9CDB; --mint:#00C896; --yellow:#FFB800;
+  --purple:#9B59B6; --white:#F8F9FA; --text:#E8EDF2; --muted:#6B7F94; --light:#B0BEC5;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--navy);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;padding-bottom:72px;overflow-x:hidden;}
+
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);}
+.bnav-btn{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;transition:color 0.2s;}
+.bnav-btn.on{color:var(--coral);}
+.bnav-icon{font-size:22px;line-height:1;}
+
+.page{display:none;min-height:calc(100vh - 72px);}
+.page.on{display:block;}
+
+.hero{background:linear-gradient(135deg,#1A2B3C 0%,#0F1923 100%);padding:20px 16px 16px;}
+.hero-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;}
+.hero-title{font-size:28px;font-weight:900;color:var(--white);line-height:1.1;}
+.hero-title span{color:var(--coral);}
+.hero-sub{font-size:13px;color:var(--muted);margin-top:4px;}
+
+.today-hero{border-radius:20px;padding:20px;margin:16px 16px 12px;position:relative;overflow:hidden;}
+.today-hero::before{content:'';position:absolute;top:-20px;right:-20px;width:120px;height:120px;background:rgba(255,255,255,0.08);border-radius:50%;}
+.today-label{font-size:11px;font-weight:800;color:rgba(255,255,255,0.75);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;}
+.today-title{font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;line-height:1.1;}
+.today-meta{font-size:13px;color:rgba(255,255,255,0.75);margin-bottom:14px;}
+.today-btns{display:flex;gap:8px;flex-wrap:wrap;position:relative;z-index:1;}
+
+.btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;padding:10px 16px;border-radius:12px;border:none;cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px;}
+.btn:active{transform:scale(0.96);}
+.btn-white{background:#fff;color:var(--coral);}
+.btn-ghost{background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);}
+.btn-mint{background:var(--mint);color:#fff;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-card{background:var(--card2);color:var(--light);border:1px solid var(--border);}
+.btn-outline-coral{background:transparent;color:var(--coral);border:2px solid var(--coral);}
+.btn-sm{padding:7px 12px;font-size:12px;border-radius:10px;}
+.btn-icon{width:36px;height:36px;padding:0;border-radius:10px;justify-content:center;font-size:17px;}
+
+.metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:0 16px;margin-bottom:12px;}
+.metric-card{background:var(--card);border-radius:14px;padding:14px 10px;text-align:center;}
+.metric-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;line-height:1;margin-bottom:3px;}
+.metric-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+
+.logged-pill{background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.25);border-radius:12px;padding:10px 14px;margin:0 16px 12px;}
+.logged-row{font-family:'DM Mono',monospace;font-size:12px;color:var(--mint);line-height:1.9;}
+
+.pu-card{background:var(--card);border-radius:16px;padding:16px;margin:0 16px 12px;}
+.pu-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.pu-badge{font-size:32px;font-weight:900;color:var(--yellow);font-family:'DM Mono',monospace;}
+.pu-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;}
+
+.week-strip{display:flex;gap:8px;overflow-x:auto;padding:0 16px 4px;margin-bottom:14px;scrollbar-width:none;}
+.week-strip::-webkit-scrollbar{display:none;}
+.wchip{flex-shrink:0;padding:8px 14px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;border:2px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.wchip.on{background:var(--coral);border-color:var(--coral);color:#fff;}
+.wchip.done{background:rgba(0,200,150,0.15);border-color:rgba(0,200,150,0.4);color:var(--mint);}
+
+.days-list{padding:0 16px;display:flex;flex-direction:column;gap:8px;}
+.day-card{background:var(--card);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;border:2px solid transparent;}
+.day-card.today{border-color:var(--coral);background:rgba(255,95,87,0.06);}
+.day-card.done{border-color:rgba(0,200,150,0.3);background:rgba(0,200,150,0.04);}
+.day-date-block{min-width:40px;text-align:center;}
+.day-dow{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.day-num{font-size:26px;font-weight:900;color:var(--white);line-height:1;}
+.day-card.today .day-num{color:var(--coral);}
+.day-content{flex:1;min-width:0;}
+.day-badge-text{font-size:15px;font-weight:800;margin-bottom:2px;}
+.day-meta-text{font-size:12px;color:var(--muted);}
+.day-run-result{font-size:11px;font-family:'DM Mono',monospace;color:var(--mint);margin-top:2px;}
+.day-pu-mini{font-size:11px;color:var(--yellow);margin-top:2px;font-weight:700;}
+.day-actions{display:flex;gap:6px;flex-direction:column;align-items:flex-end;}
+
+.stats-hero{background:linear-gradient(135deg,#1E3A5F 0%,#0F1923 100%);border-radius:20px;padding:20px;margin:16px 16px 12px;}
+.stats-big-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.stat-big{text-align:center;}
+.stat-big-val{font-size:36px;font-weight:900;line-height:1;}
+.stat-big-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-top:3px;}
+.stats-title{font-size:13px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;}
+
+.prog-list{padding:0 16px;display:flex;flex-direction:column;gap:8px;}
+.prog-card{background:var(--card);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.prog-week-label{font-size:13px;font-weight:800;min-width:30px;}
+.prog-bar-wrap{flex:1;background:var(--border);border-radius:6px;height:8px;overflow:hidden;}
+.prog-bar{height:8px;border-radius:6px;}
+.prog-val-text{font-family:'DM Mono',monospace;font-size:12px;color:var(--light);min-width:52px;text-align:right;}
+
+.wk-back{display:flex;align-items:center;gap:8px;padding:16px;cursor:pointer;}
+.wk-back span:first-child{font-size:20px;color:var(--coral);}
+.wk-back span:last-child{font-size:14px;font-weight:700;color:var(--coral);}
+.wk-page-title{font-size:22px;font-weight:900;color:var(--white);padding:0 16px;margin-bottom:16px;line-height:1.2;}
+.wk-section{background:var(--card);border-radius:14px;padding:14px;margin:0 16px 10px;}
+.wk-sec-label{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.wk-steps{display:flex;flex-direction:column;gap:6px;}
+.wk-step{font-size:13px;color:var(--muted);line-height:1.5;padding:8px 12px;background:rgba(255,255,255,0.03);border-radius:8px;border-left:3px solid var(--border);}
+.wk-step.hl{color:var(--text);background:rgba(255,255,255,0.05);border-left-color:var(--blue);}
+.wk-step.key{color:var(--white);font-weight:700;background:rgba(45,156,219,0.1);border-left-color:var(--blue);}
+
+.log-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:flex-end;justify-content:center;}
+.log-sheet{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:500px;padding:20px;max-height:90vh;overflow-y:auto;}
+.log-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
+.log-title{font-size:20px;font-weight:900;color:var(--white);margin-bottom:3px;}
+.log-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.log-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.log-field{display:flex;flex-direction:column;gap:4px;}
+.log-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.log-input{background:var(--navy);border:2px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--white);font-family:'DM Mono',monospace;font-size:15px;outline:none;}
+.log-input:focus{border-color:var(--blue);}
+.log-btns{display:flex;gap:10px;margin-top:16px;}
+.log-btn{flex:1;padding:14px;border:none;border-radius:14px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;}
+.log-save{background:var(--mint);color:#fff;}
+.log-cancel{background:var(--border);color:var(--muted);}
+
+.rule-card{background:var(--card);border-radius:14px;padding:14px;margin:0 16px 10px;display:flex;gap:12px;align-items:flex-start;}
+.rule-icon{font-size:22px;flex-shrink:0;margin-top:1px;}
+.rule-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.rule-text{font-size:13px;color:var(--muted);line-height:1.5;}
+.rule-text strong{color:var(--white);}
+.sec-head{padding:14px 16px 8px;font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
+
+/* Stats sub-tabs */
+.stats-tabs{display:flex;gap:0;margin:0 16px 14px;background:var(--card);border-radius:12px;padding:4px;}
+.stats-tab{flex:1;padding:8px 4px;border:none;background:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;border-radius:9px;transition:all 0.2s;}
+.stats-tab.on{background:var(--coral);color:#fff;}
+
+/* Run history cards */
+.run-hist-card{background:var(--card);border-radius:16px;padding:16px;margin:0 16px 10px;border-left:4px solid transparent;}
+.run-hist-card.z2{border-left-color:var(--blue);}
+.run-hist-card.z3{border-left-color:var(--mint);}
+.run-hist-card.z4{border-left-color:var(--yellow);}
+.run-hist-card.z5{border-left-color:var(--coral);}
+.run-hist-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.run-hist-date{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.run-hist-type{font-size:13px;font-weight:800;color:var(--white);margin-top:2px;}
+.run-hist-dist{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:var(--coral);line-height:1;}
+.run-hist-dist span{font-size:13px;color:var(--muted);}
+.run-hist-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.run-hist-metric{text-align:center;background:rgba(255,255,255,0.03);border-radius:8px;padding:8px 4px;}
+.run-hist-mval{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;line-height:1;margin-bottom:2px;}
+.run-hist-mlabel{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.run-hist-note{font-size:12px;color:var(--muted);margin-top:8px;font-style:italic;line-height:1.4;}
+
+/* Mini pace chart */
+.pace-chart{margin:0 16px 10px;background:var(--card);border-radius:14px;padding:14px;}
+.pace-chart-title{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;}
+.pace-chart-bars{display:flex;align-items:flex-end;gap:6px;height:64px;}
+.pace-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;}
+.pace-bar{width:100%;border-radius:4px 4px 0 0;transition:height 0.3s;}
+.pace-bar-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);white-space:nowrap;text-align:center;}
+
+/* Badge improvements */
+.run-badge-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;}
+
+</style>
+</head>
+<body>
+<nav class="bnav">
+  <button class="bnav-btn on" onclick="showPage('today',this)"><span class="bnav-icon">🏃</span>Azi</button>
+  <button class="bnav-btn" onclick="showPage('plan',this)"><span class="bnav-icon">📅</span>Plan</button>
+  <button class="bnav-btn" onclick="showPage('stats',this)"><span class="bnav-icon">📊</span>Stats</button>
+  <button class="bnav-btn" onclick="showPage('rules',this)"><span class="bnav-icon">⚡</span>Reguli</button>
+</nav>
+
+<div class="page on" id="page-today">
+  <div class="hero">
+    <div class="hero-label">Run Leo</div>
+    <div class="hero-title" id="hero-date">Buna ziua! <span>💪</span></div>
+    <div class="hero-sub" id="hero-sub"></div>
+  </div>
+  <div id="today-content" style="padding-top:4px;"></div>
+</div>
+
+<div class="page" id="page-plan">
+  <div class="hero">
+    <div class="hero-label">12 Saptamani · 1 Iun – 24 Aug 2026</div>
+    <div class="hero-title">Planul <span>Tau</span></div>
+  </div>
+  <div style="height:12px;"></div>
+  <div class="week-strip" id="week-strip"></div>
+  <div class="days-list" id="week-days"></div>
+</div>
+
+<div class="page" id="page-stats">
+  <div class="hero">
+    <div class="hero-label">Progres</div>
+    <div class="hero-title">Statistici <span>🔥</span></div>
+  </div>
+  <div class="stats-tabs">
+    <button class="stats-tab on" onclick="switchStatsTab('overview',this)">📊 General</button>
+    <button class="stats-tab" onclick="switchStatsTab('history',this)">📋 Istoric Runs</button>
+    <button class="stats-tab" onclick="switchStatsTab('progress',this)">📈 Progres</button>
+    <button class="stats-tab" onclick="switchStatsTab('check',this)">⚠️ Verificare</button>
+  </div>
+  <div id="stats-content"></div>
+</div>
+
+<div class="page" id="page-rules">
+  <div class="hero">
+    <div class="hero-label">Non-negociabile</div>
+    <div class="hero-title">Reguli <span>⚡</span></div>
+  </div>
+  <div style="height:8px;"></div>
+  <div id="rules-content"></div>
+</div>
+
+<div class="page" id="page-workout">
+  <div class="wk-back" onclick="goBack()"><span>←</span><span>Inapoi</span></div>
+  <div class="wk-page-title" id="wk-page-title"></div>
+  <div id="wk-content"></div>
+</div>
+
+<div class="log-overlay" id="log-modal" style="display:none;" onclick="if(event.target===this)closeLog()">
+  <div class="log-sheet">
+    <div class="log-handle"></div>
+    <div class="log-title">Logheaza Run</div>
+    <div class="log-sub" id="log-sub"></div>
+    <div class="log-grid">
+      <div class="log-field"><label class="log-label">Pace /km</label><input class="log-input" id="lf-pace" placeholder="6:59"></div>
+      <div class="log-field"><label class="log-label">Distanta km</label><input class="log-input" id="lf-dist" placeholder="5.02"></div>
+    </div>
+    <div class="log-grid">
+      <div class="log-field"><label class="log-label">Puls mediu</label><input class="log-input" id="lf-hr" placeholder="147"></div>
+      <div class="log-field"><label class="log-label">Puls max</label><input class="log-input" id="lf-hrmax" placeholder="159"></div>
+    </div>
+    <div class="log-grid">
+      <div class="log-field"><label class="log-label">Cadenta spm</label><input class="log-input" id="lf-spm" placeholder="156"></div>
+      <div class="log-field"><label class="log-label">Timp total</label><input class="log-input" id="lf-time" placeholder="42:03"></div>
+    </div>
+    <div class="log-field" style="margin-bottom:0"><label class="log-label">Note</label><input class="log-input" id="lf-note" placeholder="Plat, bine..."></div>
+    <div class="log-btns">
+      <button class="log-btn log-cancel" onclick="closeLog()">Anuleaza</button>
+      <button class="log-btn log-save" onclick="saveLog()">Salveaza ✓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PUSHUPS = [
+  {w:'S1 · 1-7 iun',vol:30,detail:'3 × 10',state:'done'},
+  {w:'S2 · 8-14 iun',vol:30,detail:'3 × 10',state:'done'},
+  {w:'S3 · 15-21 iun',vol:36,detail:'3 × 12',state:'current'},
+  {w:'S4 · 22-28 iun',vol:36,detail:'3 × 12',state:''},
+  {w:'S5 · 29 iun',vol:42,detail:'3 × 14',state:''},
+  {w:'S6 · 6 iul',vol:42,detail:'3 × 14',state:''},
+  {w:'S7 · 13 iul',vol:48,detail:'3 × 16',state:''},
+  {w:'S8 · 20 iul',vol:48,detail:'3 × 16',state:''},
+  {w:'S9 · 27 iul',vol:54,detail:'3 × 18',state:''},
+  {w:'S10 · 3 aug',vol:54,detail:'3 × 18',state:''},
+  {w:'S11 · 10 aug',vol:60,detail:'3 × 20',state:''},
+  {w:'S12 · 17 aug',vol:60,detail:'3 × 20 🎯',state:''},
+];
+
+// Each day: id, date, dayName, badge, badgeClass, detail, pushups, isRun, isToday, preFilled
+const WEEKS = [
+  {
+    id:'w1', label:'S1', dates:'1 – 7 Iunie', km:'~15km', tag:'done', tagLabel:'✓ Finalizat',
+    phase:null,
+    days:[
+      {id:'d-0601',date:'1 Iun',day:'Lun',wk:'run5k',badge:'5K ✓',bc:'bdone',detail:'7:27/km · 148bpm · Deal',pu:'',isRun:true,
+       prefill:{pace:'7:27',dist:'5.00',hr:'148',hrmax:'168',spm:'136',time:'37:23',note:'Prima alergare · Deal'}},
+      {id:'d-0602',date:'2 Iun',day:'Mar',badge:'Mers',bc:'brest',detail:'10k+ pași',pu:'3×10',isRun:false},
+      {id:'d-0603',date:'3 Iun',day:'Mie',wk:'run5k',badge:'5K ✓',bc:'bdone',detail:'8:37/km · 147bpm · Deal',pu:'3×10',isRun:true,
+       prefill:{pace:'8:37',dist:'5.00',hr:'147',hrmax:'173',spm:'136',time:'46:40',note:'Deal · 3 opriri pantă'}},
+      {id:'d-0604',date:'4 Iun',day:'Joi',badge:'Mers',bc:'brest',detail:'',pu:'3×10',isRun:false},
+      {id:'d-0605',date:'5 Iun',day:'Vin',wk:'run5k',badge:'5K ✓',bc:'bdone',detail:'7:39/km · 149bpm · Deal',pu:'3×10',isRun:true,
+       prefill:{pace:'7:39',dist:'5.00',hr:'149',hrmax:'179',spm:'136',time:'46:51',note:'Deal · 3 opriri pantă'}},
+      {id:'d-0606',date:'6 Iun',day:'Sâm',badge:'Mers',bc:'brest',detail:'',pu:'3×10',isRun:false},
+      {id:'d-0607',date:'7 Iun',day:'Dum',badge:'Mers',bc:'brest',detail:'',pu:'3×10',isRun:false},
+    ]
+  },
+  {
+    id:'w2', label:'S2', dates:'8 – 14 Iunie', km:'~16km', tag:'now', tagLabel:'← Acum',
+    phase:null,
+    days:[
+      {id:'d-0608',date:'8 Iun',day:'Lun',wk:'run5k',badge:'5K ✓',bc:'bdone',detail:'7:19/km · 146bpm · Plat',pu:'3×10',isRun:true,
+       prefill:{pace:'7:19',dist:'4.98',hr:'146',hrmax:'173',spm:'152',time:'36:24',note:'Plat · zero opriri'}},
+      {id:'d-0609',date:'9 Iun',day:'Mar',badge:'Mers',bc:'brest',detail:'',pu:'3×10',isRun:false},
+      {id:'d-0610',date:'10 Iun',day:'Mie',wk:'run5k',badge:'5K ✓',bc:'bdone',detail:'6:29/km · 155bpm · Plat',pu:'3×10',isRun:true,
+       prefill:{pace:'6:29',dist:'5.02',hr:'155',hrmax:'165',spm:'157',time:'32:29',note:'Plat · 157spm · zero opriri'}},
+      {id:'d-0611',date:'11 Iun',day:'Joi',badge:'Mers',bc:'brest',detail:'',pu:'3×10',isRun:false},
+      {id:'d-0612',date:'12 Iun',day:'Vin',wk:'run6k',badge:'6K ✓',bc:'bdone',detail:'6:59/km · 147bpm · Plat',pu:'3×10',isRun:true,prefill:{pace:'6:59',dist:'6.02',hr:'147',hrmax:'159',spm:'156',time:'42:03',note:'Plat · zero opriri · efort 2/10'}},
+      {id:'d-0613',date:'13 Iun',day:'Sâm',badge:'Mers',bc:'brest',detail:'',pu:'3×10',isRun:false},
+      {id:'d-0614',date:'14 Iun',day:'Dum',badge:'Mers',bc:'brest',detail:'',pu:'3×10',isRun:false},
+    ]
+  },
+  {
+    id:'w3', label:'S3', dates:'15 – 21 Iunie', km:'~17km', tag:'base', tagLabel:'Bază',
+    phase:null,
+    days:[
+      {id:'d-0615',wk:'run5k',date:'15 Iun',day:'Lun',badge:'5K',bc:'bz2',detail:'160+ spm',pu:'3×12',isRun:true},
+      {id:'d-0616',date:'16 Iun',day:'Mar',badge:'Mers',bc:'brest',detail:'',pu:'3×12',isRun:false},
+      {id:'d-0617',wk:'run6k',date:'17 Iun',day:'Mie',badge:'6K+ Blaj',bc:'bz2',detail:'Track Blaj (nu Parcul Mare) · +1K extra dupa oprire Garmin · 160+ spm target',pu:'3×12',isRun:true},
+      {id:'d-0618',date:'18 Iun',day:'Joi',badge:'Mers',bc:'brest',detail:'',pu:'3×12',isRun:false},
+      {id:'d-0619',wk:'run6k',date:'19 Iun',day:'Vin',badge:'6K Blaj',bc:'bz2',detail:'Track Blaj · plan 6K respectat · ascensiune 76m = eroare senzor (real 0m, pistă)',pu:'3×12',isRun:true},
+      {id:'d-0620',date:'20 Iun',day:'Sâm',badge:'Mers',bc:'brest',detail:'',pu:'3×12',isRun:false},
+      {id:'d-0621',date:'21 Iun',day:'Dum',badge:'Mers',bc:'brest',detail:'',pu:'3×12',isRun:false},
+    ]
+  },
+  {
+    id:'w4', label:'S4', dates:'22 – 28 Iunie', km:'~12km', tag:'deload', tagLabel:'Descărcare',
+    phase:null,
+    days:[
+      {id:'d-0622',wk:'run4k_easy',date:'22 Iun',day:'Lun',badge:'4K ușor',bc:'bdeload',detail:'Puls <130 bpm · realizat 134 avg/142 max (usor peste, RPE 1/10)',pu:'3×12',isRun:true},
+      {id:'d-0623',date:'23 Iun',day:'Mar',badge:'Mers',bc:'brest',detail:'',pu:'3×12',isRun:false},
+      {id:'d-0624',wk:'run4k_easy',date:'24 Iun',day:'Mie',badge:'4K ușor',bc:'bdeload',detail:'',pu:'3×12',isRun:true},
+      {id:'d-0625',date:'25 Iun',day:'Joi',badge:'Mers',bc:'brest',detail:'',pu:'3×12',isRun:false},
+      {id:'d-0626',wk:'run4k_easy',date:'26 Iun',day:'Vin',badge:'4K progresiv',bc:'bz3',detail:'Tehnică aplicată (splits accelerate 6:52→6:21) — HR avg141/max154, peste targetul deload <130. 20.2% din timp >148bpm',pu:'3×12',isRun:true},
+      {id:'d-0627',date:'27 Iun',day:'Sâm',badge:'Mers',bc:'brest',detail:'',pu:'3×12',isRun:false},
+      {id:'d-0628',date:'28 Iun',day:'Dum',badge:'Mers',bc:'brest',detail:'',pu:'3×12',isRun:false},
+    ]
+  },
+  {
+    id:'w5', label:'S5', dates:'29 Iun – 5 Iul', km:'~17km', tag:'build', tagLabel:'Construcție',
+    phase:{label:'FAZA 2 — CONSTRUCȚIE',color:'#4ade80',desc:'Long Run sâmbăta · strides miercuri · 29 iun – 26 iul'},
+    days:[
+      {id:'d-0629',wk:'run6k',date:'29 Iun',day:'Lun',badge:'6K — efort ridicat',bc:'bz3',detail:'Plan Z2 ușor, realizat mult peste: HR avg146.5/max154, 60.3% timp >148bpm. Positive split, fade pe final',pu:'3×14',isRun:true},
+      {id:'d-0630',date:'30 Iun',day:'Mar',badge:'Mers',bc:'brest',detail:'',pu:'3×14',isRun:false},
+      {id:'d-0701',wk:'run5k_strides',date:'1 Iul',day:'Mie',badge:'5K ✓ + strides ✓',bc:'bz2',detail:'HR avg138/max147 — zona de confort ✓ · strides prima sesiune: 4×100m pistă, best pace 2:32/km',pu:'3×14',isRun:true},
+      {id:'d-0702',date:'2 Iul',day:'Joi',badge:'Mers',bc:'brest',detail:'',pu:'3×14',isRun:false},
+      {id:'d-0703',date:'3 Iul',day:'Vin',badge:'Mers',bc:'brest',detail:'',pu:'3×14',isRun:false},
+      {id:'d-0704',wk:'long7k',date:'4 Iul',day:'Sâm',badge:'7.05K ✓',bc:'bz3',detail:'7:14/km · HR 138/149 · cad 164/168',pu:'3×14',isRun:true},
+      {id:'d-0705',date:'5 Iul',day:'Dum',badge:'Mers',bc:'brest',detail:'Recuperare activă',pu:'3×14',isRun:false},
+    ]
+  },
+  {
+    id:'w6', label:'S6', dates:'6 – 12 Iulie', km:'~18km', tag:'build', tagLabel:'Construcție',
+    phase:null,
+    days:[
+      {id:'d-0706',wk:'run6k',date:'6 Iul',day:'Lun',badge:'6K Z2',bc:'bz2',detail:'Ritm ușor',pu:'3×14',isRun:true},
+      {id:'d-0707',date:'7 Iul',day:'Mar',badge:'Mers',bc:'brest',detail:'',pu:'3×14',isRun:false},
+      {id:'d-0708',wk:'run5k_strides',date:'8 Iul',day:'Mie',badge:'5K + strides',bc:'bz2',detail:'4× strides 20 sec la final · 72h după Long',pu:'3×14',isRun:true},
+      {id:'d-0709',date:'9 Iul',day:'Joi',badge:'Mers',bc:'brest',detail:'',pu:'3×14',isRun:false},
+      {id:'d-0710',date:'10 Iul',day:'Vin',badge:'Mers',bc:'brest',detail:'',pu:'3×14',isRun:false},
+      {id:'d-0711',wk:'long8k',date:'11 Iul',day:'Sâm',badge:'8K Long',bc:'blong',detail:'Z2 strict',pu:'3×14',isRun:true},
+      {id:'d-0712',date:'12 Iul',day:'Dum',badge:'Mers',bc:'brest',detail:'',pu:'3×14',isRun:false},
+    ]
+  },
+  {
+    id:'w7', label:'S7', dates:'13 – 19 Iulie', km:'~20km', tag:'build', tagLabel:'Construcție',
+    phase:null,
+    days:[
+      {id:'d-0713',wk:'run6k',date:'13 Iul',day:'Lun',badge:'6K Z2',bc:'bz2',detail:'Ritm ușor',pu:'3×16',isRun:true},
+      {id:'d-0714',date:'14 Iul',day:'Mar',badge:'Mers',bc:'brest',detail:'',pu:'3×16',isRun:false},
+      {id:'d-0715',wk:'run5k_strides',date:'15 Iul',day:'Mie',badge:'5K + strides',bc:'bz2',detail:'4× strides 20 sec la final · 72h după Long',pu:'3×16',isRun:true},
+      {id:'d-0716',date:'16 Iul',day:'Joi',badge:'Mers',bc:'brest',detail:'',pu:'3×16',isRun:false},
+      {id:'d-0717',date:'17 Iul',day:'Vin',badge:'Mers',bc:'brest',detail:'',pu:'3×16',isRun:false},
+      {id:'d-0718',wk:'long9k',date:'18 Iul',day:'Sâm',badge:'9K Long',bc:'blong',detail:'Prima dată 9K fără oprire',pu:'3×16',isRun:true},
+      {id:'d-0719',date:'19 Iul',day:'Dum',badge:'Mers',bc:'brest',detail:'',pu:'3×16',isRun:false},
+    ]
+  },
+  {
+    id:'w8', label:'S8', dates:'20 – 26 Iulie', km:'~12km', tag:'deload', tagLabel:'Descărcare',
+    phase:null,
+    days:[
+      {id:'d-0720',wk:'hrmax_test',date:'20 Iul',day:'Lun',badge:'Test HR Max',bc:'bz3',detail:'Sprint maxim · calibrare zone S9–S11',pu:'3×16',isRun:false},
+      {id:'d-0721',date:'21 Iul',day:'Mar',badge:'Mers',bc:'brest',detail:'',pu:'3×16',isRun:false},
+      {id:'d-0722',wk:'run4k_easy',date:'22 Iul',day:'Mie',badge:'4K ușor',bc:'bdeload',detail:'',pu:'3×16',isRun:true},
+      {id:'d-0723',date:'23 Iul',day:'Joi',badge:'Mers',bc:'brest',detail:'',pu:'3×16',isRun:false},
+      {id:'d-0724',wk:'run4k_easy',date:'24 Iul',day:'Vin',badge:'4K ușor',bc:'bdeload',detail:'',pu:'3×16',isRun:true},
+      {id:'d-0725',date:'25 Iul',day:'Sâm',badge:'Mers',bc:'brest',detail:'',pu:'3×16',isRun:false},
+      {id:'d-0726',date:'26 Iul',day:'Dum',badge:'Mers',bc:'brest',detail:'',pu:'3×16',isRun:false},
+    ]
+  },
+  {
+    id:'w9', label:'S9', dates:'27 Iul – 2 Aug', km:'~21km', tag:'peak', tagLabel:'Vârf',
+    phase:{label:'FAZA 3 — CONSOLIDARE & 10K',color:'#ff6b47',desc:'Tempo introdus · 10K continuu · 27 iul – 24 aug'},
+    days:[
+      {id:'d-0727',wk:'tempo6k',date:'27 Iul',day:'Lun',badge:'6K Tempo',bc:'bz3',detail:'2K la 136–145 bpm în mijloc',pu:'3×18',isRun:true},
+      {id:'d-0728',date:'28 Iul',day:'Mar',badge:'Mers',bc:'brest',detail:'',pu:'3×18',isRun:false},
+      {id:'d-0729',wk:'run5k',date:'29 Iul',day:'Mie',badge:'5K Z2',bc:'bz2',detail:'',pu:'3×18',isRun:true},
+      {id:'d-0730',date:'30 Iul',day:'Joi',badge:'Mers',bc:'brest',detail:'',pu:'3×18',isRun:false},
+      {id:'d-0731',date:'31 Iul',day:'Vin',badge:'Mers',bc:'brest',detail:'',pu:'3×18',isRun:false},
+      {id:'d-0801',wk:'long10k',date:'1 Aug',day:'Sâm',badge:'10K',bc:'blong',detail:'Prima tentativă 10K',pu:'3×18',isRun:true},
+      {id:'d-0802',date:'2 Aug',day:'Dum',badge:'Mers',bc:'brest',detail:'',pu:'3×18',isRun:false},
+    ]
+  },
+  {
+    id:'w10', label:'S10', dates:'3 – 9 August', km:'~22km', tag:'peak', tagLabel:'Vârf',
+    phase:null,
+    days:[
+      {id:'d-0803',wk:'tempo6k',date:'3 Aug',day:'Lun',badge:'6K Tempo',bc:'bz3',detail:'',pu:'3×18',isRun:true},
+      {id:'d-0804',date:'4 Aug',day:'Mar',badge:'Mers',bc:'brest',detail:'',pu:'3×18',isRun:false},
+      {id:'d-0805',wk:'run6k',date:'5 Aug',day:'Mie',badge:'6K Z2',bc:'bz2',detail:'',pu:'3×18',isRun:true},
+      {id:'d-0806',date:'6 Aug',day:'Joi',badge:'Mers',bc:'brest',detail:'',pu:'3×18',isRun:false},
+      {id:'d-0807',date:'7 Aug',day:'Vin',badge:'Mers',bc:'brest',detail:'',pu:'3×18',isRun:false},
+      {id:'d-0808',wk:'long10k',date:'8 Aug',day:'Sâm',badge:'10K continuu 🎯',bc:'blong',detail:'Fără oprire',pu:'3×18',isRun:true},
+      {id:'d-0809',date:'9 Aug',day:'Dum',badge:'Mers',bc:'brest',detail:'',pu:'3×18',isRun:false},
+    ]
+  },
+  {
+    id:'w11', label:'S11', dates:'10 – 16 August', km:'~23km', tag:'peak', tagLabel:'Vârf',
+    phase:null,
+    days:[
+      {id:'d-0810',wk:'tempo6k',date:'10 Aug',day:'Lun',badge:'6K Tempo',bc:'bz3',detail:'+4× strides',pu:'3×20',isRun:true},
+      {id:'d-0811',date:'11 Aug',day:'Mar',badge:'Mers',bc:'brest',detail:'',pu:'3×20',isRun:false},
+      {id:'d-0812',wk:'run6k',date:'12 Aug',day:'Mie',badge:'6K Z2',bc:'bz2',detail:'',pu:'3×20',isRun:true},
+      {id:'d-0813',date:'13 Aug',day:'Joi',badge:'Mers',bc:'brest',detail:'',pu:'3×20',isRun:false},
+      {id:'d-0814',date:'14 Aug',day:'Vin',badge:'Mers',bc:'brest',detail:'',pu:'3×20',isRun:false},
+      {id:'d-0815',wk:'long11k',date:'15 Aug',day:'Sâm',badge:'11K Long',bc:'blong',detail:'Săptămâna de vârf',pu:'3×20',isRun:true},
+      {id:'d-0816',date:'16 Aug',day:'Dum',badge:'Mers',bc:'brest',detail:'',pu:'3×20',isRun:false},
+    ]
+  },
+  {
+    id:'w12', label:'S12', dates:'17 – 24 August', km:'~20km', tag:'race', tagLabel:'Race Week',
+    phase:null,
+    days:[
+      {id:'d-0817',wk:'run5k_easy',date:'17 Aug',day:'Lun',badge:'5K ușor',bc:'bz2',detail:'Picioare proaspete',pu:'3×20',isRun:true},
+      {id:'d-0818',date:'18 Aug',day:'Mar',badge:'Mers',bc:'brest',detail:'',pu:'3×20',isRun:false},
+      {id:'d-0819',wk:'run5k_easy',date:'19 Aug',day:'Mie',badge:'5K ușor',bc:'bz2',detail:'2× 1km la pace țintă',pu:'3×20',isRun:true},
+      {id:'d-0820',date:'20 Aug',day:'Joi',badge:'Odihnă',bc:'brest',detail:'Somn prioritar',pu:'3×20',isRun:false},
+      {id:'d-0821',date:'21 Aug',day:'Vin',badge:'Odihnă',bc:'brest',detail:'',pu:'3×20',isRun:false},
+      {id:'d-0822',date:'22 Aug',day:'Sâm',badge:'Mers 20 min',bc:'brest',detail:'Activare ușoară',pu:'3×20',isRun:false},
+      {id:'d-0824',wk:'race10k',date:'24 Aug',day:'Dum',badge:'10K RACE 🏁',bc:'brace',detail:'Pace țintă 6:30–7:00/km',pu:'',isRun:true},
+    ]
+  },
+];
+
+
+// ─── WORKOUT DEFINITIONS ─────────────────────────────────
+const WORKOUTS = {
+  'run5k': {
+    title: 'Run 5K — Zona 2',
+    sections: [
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '500m mers alert — ritm mai rapid decât plimbarea normală',
+        'Leg swings față-spate — 10 per picior',
+        'Leg swings lateral — 10 per picior',
+        'Hip circles — 10 per șold',
+        'Squat ușor — 10 repetări',
+        'High knees pe loc — 20 secunde'
+      ]},
+      {label:'ALERGARE', icon:'🏃', color:'var(--green)', steps:[
+        'Distanță: 5.0 km continuu',
+        'Puls țintă: 138–150 bpm — zona de bază confirmată',
+        'Pace estimat: 6:30–7:30 /km',
+        'Cadență țintă: 158+ spm',
+        'Poți vorbi în propoziții scurte? Da = ritm corect'
+      ]},
+      {label:'RĂCIRE', icon:'🧘', color:'var(--accent3)', steps:[
+        '500m mers lent — puls să coboare sub 100 bpm',
+        'Stretch gambe — 30 sec per picior (mâna în perete)',
+        'Stretch quads — 30 sec per picior (călcâi la fesă)',
+        'Stretch flexori șold — 30 sec per parte (fandare cu genunchiul jos)',
+        'Stretch ischiogambieri — 30 sec per picior'
+      ]}
+    ]
+  },
+  'run6k': {
+    title: 'Run 6K — Zona 2',
+    sections: [
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '500m mers alert',
+        'Leg swings față-spate — 10 per picior',
+        'Leg swings lateral — 10 per picior',
+        'Hip circles — 10 per șold',
+        'Squat ușor — 10 repetări',
+        'High knees pe loc — 20 secunde'
+      ]},
+      {label:'ALERGARE', icon:'🏃', color:'var(--green)', steps:[
+        'Distanță: 6.0 km continuu',
+        'Puls țintă: 138–150 bpm — zona de bază confirmată',
+        'Pace estimat: 6:30–7:30 /km',
+        'Cadență țintă: 158+ spm',
+        'Primul km mai lent — lasă pulsul să se stabilizeze'
+      ]},
+      {label:'RĂCIRE', icon:'🧘', color:'var(--accent3)', steps:[
+        '500m mers lent',
+        'Stretch gambe — 30 sec per picior',
+        'Stretch quads — 30 sec per picior',
+        'Stretch flexori șold — 30 sec per parte',
+        'Stretch ischiogambieri — 30 sec per picior'
+      ]}
+    ]
+  },
+  'run4k_easy': {
+    title: 'Run 4K Ușor — Descărcare',
+    sections: [
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '500m mers ușor — ritm relaxat',
+        'Leg swings ușor — 8 per picior',
+        'Hip circles — 8 per șold'
+      ]},
+      {label:'ALERGARE', icon:'🏃', color:'var(--green)', steps:[
+        'Distanță: 4.0 km',
+        'Puls țintă: sub 130 bpm — foarte ușor',
+        'Pace estimat: 8:00–9:00 /km',
+        'Săptămâna de descărcare — nu forța nimic',
+        'Dacă simți oboseală — treci pe mers fără nicio presiune'
+      ]},
+      {label:'RĂCIRE', icon:'🧘', color:'var(--accent3)', steps:[
+        '500m mers lent',
+        'Stretch gambe — 30 sec per picior',
+        'Stretch quads — 30 sec per picior',
+        'Stretch flexori șold — 30 sec per parte'
+      ]}
+    ]
+  },
+  'hrmax_test': {
+    title: 'Test HR Max',
+    sections: [
+      {label:'NOTĂ', icon:'⚠️', color:'var(--yellow)', steps:[
+        'Testul calibrează zonele HR pentru S9–S11',
+        'Nu se loghează distanță sau pace — contează doar HR Max atins',
+        'Garminul salvează automat HR Max la final de activitate'
+      ]},
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '10–15 minute mers vioi sau alergare ușoară',
+        'Puls să ajungă în jur de 120–130 bpm înainte de start',
+        'Nu sări direct la efort — încălzire completă obligatorie'
+      ]},
+      {label:'ETAPA 1 — MODERAT', icon:'🏃', color:'var(--green)', steps:[
+        '3 minute pace moderat — ~7:00–7:30 /km',
+        'Respirați ritmic, efort controlat',
+        'Puls estimat: 140–150 bpm'
+      ]},
+      {label:'ETAPA 2 — RAPID', icon:'🔥', color:'var(--coral)', steps:[
+        '3 minute pace rapid — ~6:00–6:30 /km',
+        'Respiri greu, dar poți continua',
+        'Puls estimat: 155–165 bpm'
+      ]},
+      {label:'SPRINT MAXIM', icon:'⚡', color:'var(--coral)', steps:[
+        '1–2 minute sprint MAXIM — tot ce ai, fără rezerve',
+        'Oprești când nu mai poți menține ritmul',
+        'Garminul înregistrează automat HR Max'
+      ]},
+      {label:'RECUPERARE', icon:'🧘', color:'var(--accent3)', steps:[
+        'Mers lent 5–10 minute după sprint',
+        'Nu te opri brusc — continuă mișcarea',
+        'Noteaza HR Max afișat pe ceas imediat după sprint',
+        'Stretch ușor gambe și quads — 30 sec per parte'
+      ]}
+    ]
+  },
+  'run5k_strides': {
+    title: 'Run 5K + 4× Strides',
+    sections: [
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '500m mers alert',
+        'Leg swings față-spate — 10 per picior',
+        'Leg swings lateral — 10 per picior',
+        'Hip circles — 10 per șold',
+        'Squat ușor — 10 repetări',
+        'High knees pe loc — 20 secunde'
+      ]},
+      {label:'ALERGARE', icon:'🏃', color:'var(--green)', steps:[
+        'Distanță: 5.0 km la ritm ușor',
+        'Puls țintă: 138–150 bpm — zona de bază confirmată',
+        'Pace estimat: 6:30–7:30 /km',
+        'Cadență țintă: 160+ spm',
+        '72h după Long Run — beneficiezi de recuperare completă'
+      ]},
+      {label:'4× STRIDES', icon:'⚡', color:'var(--accent)', steps:[
+        'Mergi 30 secunde — pregătire',
+        '— STRIDE 1 —',
+        'Accelerează progresiv pe 25 secunde până la ~80% din maxim',
+        'Pace țintă: 5:00–5:30 /km — alert dar nu sprint',
+        'Mergi 60 secunde — recuperare completă',
+        '— STRIDE 2 — același protocol',
+        'Mergi 60 secunde recuperare',
+        '— STRIDE 3 — același protocol',
+        'Mergi 60 secunde recuperare',
+        '— STRIDE 4 — același protocol',
+        'Total strides: ~7 minute extra după run'
+      ]},
+      {label:'RĂCIRE', icon:'🧘', color:'var(--accent3)', steps:[
+        '500m mers lent — puls să coboare',
+        'Stretch gambe — 30 sec per picior',
+        'Stretch quads — 30 sec per picior',
+        'Stretch flexori șold — 30 sec per parte',
+        'Stretch ischiogambieri — 30 sec per picior'
+      ]}
+    ]
+  },
+  'long7k': {
+    title: 'Long Run 7K',
+    sections: [
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '500m mers alert',
+        'Leg swings față-spate — 10 per picior',
+        'Hip circles — 10 per șold',
+        'Squat ușor — 10 repetări'
+      ]},
+      {label:'ALERGARE', icon:'🏃', color:'var(--green)', steps:[
+        'Distanță: 7.0 km — primul Long Run',
+        'Puls țintă: 130–148 bpm — mai ușor decât runurile obișnuite',
+        'Pace estimat: 7:00–8:00 /km',
+        'Primii 2km foarte ușor — nu grăbi',
+        'Obiectiv: termini fără opriri, nu viteza',
+        'Dacă simți că nu poți continua — mers 1 min, reia'
+      ]},
+      {label:'RĂCIRE', icon:'🧘', color:'var(--accent3)', steps:[
+        '500m mers lent — lasă pulsul să coboare complet',
+        'Stretch gambe — 45 sec per picior (mai lung după long run)',
+        'Stretch quads — 45 sec per picior',
+        'Stretch flexori șold — 45 sec per parte',
+        'Stretch ischiogambieri — 45 sec per picior',
+        'Stretch fesieri — 30 sec per parte (gleznă pe genunchi culcat)'
+      ]}
+    ]
+  },
+  'long8k': {
+    title: 'Long Run 8K',
+    sections: [
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '500m mers alert',
+        'Leg swings — 10 per picior',
+        'Hip circles — 10 per șold',
+        'Squat ușor — 10 repetări'
+      ]},
+      {label:'ALERGARE', icon:'🏃', color:'var(--green)', steps:[
+        'Distanță: 8.0 km',
+        'Puls țintă: 130–148 bpm — ritm conversațional',
+        'Pace estimat: 7:00–8:00 /km',
+        'Primii 2km ușor, km 3–6 ritm stabil, ultimii 2km după simț',
+        'Hidratare: bea apă cu 30 min înainte',
+        'Obiectiv: fără opriri'
+      ]},
+      {label:'RĂCIRE', icon:'🧘', color:'var(--accent3)', steps:[
+        '500m mers lent',
+        'Stretch gambe — 45 sec per picior',
+        'Stretch quads — 45 sec per picior',
+        'Stretch flexori șold — 45 sec per parte',
+        'Stretch ischiogambieri — 45 sec per picior',
+        'Stretch fesieri — 30 sec per parte'
+      ]}
+    ]
+  },
+  'long9k': {
+    title: 'Long Run 9K',
+    sections: [
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '500m mers alert',
+        'Leg swings — 10 per picior',
+        'Hip circles — 10 per șold',
+        'Squat ușor — 10 repetări'
+      ]},
+      {label:'ALERGARE', icon:'🏃', color:'var(--green)', steps:[
+        'Distanță: 9.0 km — primul run aproape de 10K',
+        'Puls țintă: 130–148 bpm',
+        'Pace estimat: 7:00–8:00 /km',
+        'Km 1–2: foarte ușor, lasă corpul să se încălzească',
+        'Km 3–7: ritm stabil și confortabil',
+        'Km 8–9: menții ritmul — nu accelera la final',
+        'Hidratare obligatorie cu 30 min înainte'
+      ]},
+      {label:'RĂCIRE', icon:'🧘', color:'var(--accent3)', steps:[
+        '500m mers lent',
+        'Stretch gambe — 45 sec per picior',
+        'Stretch quads — 45 sec per picior',
+        'Stretch flexori șold — 45 sec per parte',
+        'Stretch ischiogambieri — 45 sec per picior',
+        'Stretch fesieri — 30 sec per parte'
+      ]}
+    ]
+  },
+  'tempo6k': {
+    title: 'Run 6K Tempo',
+    sections: [
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '500m mers alert',
+        'Leg swings față-spate — 10 per picior',
+        'Leg swings lateral — 10 per picior',
+        'Hip circles — 10 per șold',
+        'Squat ușor — 10 repetări',
+        'High knees pe loc — 20 secunde'
+      ]},
+      {label:'ALERGARE', icon:'🏃', color:'var(--green)', steps:[
+        'Km 1–2: Zona 2 ușor — puls 130–140 bpm, încălzire run',
+        'Km 3–4: TEMPO — puls 141–152 bpm, pace ~6:00–6:20 /km',
+        'La Tempo: simți efortul dar poți scoate câte un cuvânt',
+        'Km 5–6: Zona 2 din nou — recuperare activă',
+        'Total distanță: 6.0 km',
+        'Nu forța Tempo-ul dacă pulsul urcă peste 155 bpm'
+      ]},
+      {label:'RĂCIRE', icon:'🧘', color:'var(--accent3)', steps:[
+        '500m mers lent',
+        'Stretch gambe — 45 sec per picior',
+        'Stretch quads — 45 sec per picior',
+        'Stretch flexori șold — 45 sec per parte',
+        'Stretch ischiogambieri — 45 sec per picior'
+      ]}
+    ]
+  },
+  'long10k': {
+    title: 'Long Run 10K',
+    sections: [
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '500m mers alert',
+        'Leg swings — 10 per picior',
+        'Hip circles — 10 per șold',
+        'Squat ușor — 10 repetări'
+      ]},
+      {label:'ALERGARE', icon:'🏃', color:'var(--green)', steps:[
+        'Distanță: 10.0 km',
+        'Puls țintă: 130–150 bpm',
+        'Pace estimat: 6:45–7:30 /km',
+        'Km 1–2: foarte ușor, stabilizare puls',
+        'Km 3–8: ritm stabil și confortabil',
+        'Km 9–10: menții — nu accelera',
+        'Hidratare: 500ml apă cu 30 min înainte',
+        'Prima tentativă de 10K — obiectiv: termini fără opriri'
+      ]},
+      {label:'RĂCIRE', icon:'🧘', color:'var(--accent3)', steps:[
+        '500m mers lent — cel puțin 5 minute',
+        'Stretch gambe — 60 sec per picior',
+        'Stretch quads — 60 sec per picior',
+        'Stretch flexori șold — 45 sec per parte',
+        'Stretch ischiogambieri — 45 sec per picior',
+        'Stretch fesieri — 45 sec per parte',
+        'Masaj ușor gambe cu mâinile — 2 min per picior'
+      ]}
+    ]
+  },
+  'long11k': {
+    title: 'Long Run 11K',
+    sections: [
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '500m mers alert',
+        'Leg swings — 10 per picior',
+        'Hip circles — 10 per șold',
+        'Squat ușor — 10 repetări'
+      ]},
+      {label:'ALERGARE', icon:'🏃', color:'var(--green)', steps:[
+        'Distanță: 11.0 km — săptămâna de vârf',
+        'Puls țintă: 130–150 bpm',
+        'Pace estimat: 6:45–7:30 /km',
+        'Km 1–2: ușor, km 3–9: ritm stabil, km 10–11: menții',
+        'Hidratare: 500ml cu 30 min înainte',
+        'Cel mai lung run de până acum — mental: un km pe rând'
+      ]},
+      {label:'RĂCIRE', icon:'🧘', color:'var(--accent3)', steps:[
+        '500m mers lent — minim 5–7 minute',
+        'Stretch gambe — 60 sec per picior',
+        'Stretch quads — 60 sec per picior',
+        'Stretch flexori șold — 45 sec per parte',
+        'Stretch ischiogambieri — 45 sec per picior',
+        'Stretch fesieri — 45 sec per parte',
+        'Masaj ușor gambe — 2 min per picior'
+      ]}
+    ]
+  },
+  'race10k': {
+    title: '🏁 RACE DAY — 10K',
+    sections: [
+      {label:'DIMINEAȚA CURSEI', icon:'☀️', color:'var(--accent)', steps:[
+        'Trezire cu 2h înainte de start',
+        'Mic dejun ușor cu 1.5h înainte — ovăz sau pâine cu ou',
+        'Hidratare: 500ml apă în primele 30 min după trezire',
+        'Nu mânca cu mai puțin de 1h înainte de start'
+      ]},
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '10 min mers alert — 30 min înainte de start',
+        'Leg swings față-spate — 10 per picior',
+        'Leg swings lateral — 10 per picior',
+        'Hip circles — 10 per șold',
+        '2× 30 sec jogging ușor',
+        '2× strides scurte de 15 sec la pace cursă'
+      ]},
+      {label:'CURSA', icon:'🏃', color:'var(--green)', steps:[
+        'Distanță: 10.0 km',
+        'Pace țintă: 6:30–7:00 /km',
+        'Km 1–2: MAI LENT decât te simți — toată lumea pornește repede, tu nu',
+        'Km 3–7: ritmul tău natural — stabil și consistent',
+        'Km 8–9: evaluezi cum te simți',
+        'Km 10: dacă mai ai energie — accelerezi ultimii 500m',
+        'Mental: fiecare km bifat e un succes'
+      ]},
+      {label:'DUPĂ CURSĂ', icon:'🧘', color:'var(--accent3)', steps:[
+        '10 min mers imediat după finish — nu te opri brusc',
+        'Hidratare: apă sau băutură izotonică',
+        'Stretch complet — 10 minute minim',
+        'Masaj ușor gambe',
+        'Felicitări — ai finalizat primul tău 10K! 🎉'
+      ]}
+    ]
+  },
+  'run5k_easy': {
+    title: 'Run 5K Ușor — Tapering',
+    sections: [
+      {label:'ÎNCĂLZIRE', icon:'🚶', color:'var(--accent2)', steps:[
+        '500m mers alert',
+        'Leg swings — 8 per picior',
+        'Hip circles — 8 per șold'
+      ]},
+      {label:'ALERGARE', icon:'🏃', color:'var(--green)', steps:[
+        'Distanță: 5.0 km',
+        'Puls țintă: sub 140 bpm — foarte ușor',
+        'Race week — picioare proaspete sunt prioritatea',
+        'Nu forța nimic — este săptămâna de tapering',
+        'Simte-te bine, nu te epuiza'
+      ]},
+      {label:'RĂCIRE', icon:'🧘', color:'var(--accent3)', steps:[
+        '500m mers lent',
+        'Stretch ușor — 20 sec per grup muscular',
+        'Nu stretch agresiv în race week'
+      ]}
+    ]
+  }
+};
+// ─── STATE ───────────────────────────────────────────────
+
+
+const PRE_RUNS = {
+  'd-0601':{pace:'7:27',dist:'5.00',hr:'148',hrmax:'168',spm:'136',time:'37:23',note:'Deal - prima alergare'},
+  'd-0603':{pace:'8:37',dist:'5.00',hr:'147',hrmax:'173',spm:'136',time:'46:40',note:'Deal - 3 opriri panta'},
+  'd-0605':{pace:'7:39',dist:'5.00',hr:'149',hrmax:'179',spm:'136',time:'46:51',note:'Deal - 3 opriri panta'},
+  'd-0608':{pace:'7:19',dist:'4.98',hr:'146',hrmax:'173',spm:'152',time:'36:24',note:'Parcul Mare - flat - zero opriri'},
+  'd-0610':{pace:'6:29',dist:'5.02',hr:'155',hrmax:'165',spm:'157',time:'32:29',note:'Parcul Mare - flat - zero opriri'},
+  'd-0612':{pace:'6:59',dist:'6.02',hr:'147',hrmax:'159',spm:'156',time:'42:03',note:'Parcul Mare - flat - efort 2/10'},
+  'd-0615':{pace:'7:39',dist:'5.01',hr:'144',hrmax:'153',spm:'158',time:'38:17',note:'Parcul Mare - flat - 0m elevatie'},
+  'd-0617':{pace:'7:29',dist:'7.09',hr:'139',hrmax:'152',spm:'161',time:'53:06',note:'Track Blaj - plan 6K, +1K extra (Garmin a oprit exercitiul si a pierdut distanta partiala, alergat in plus ca sa fie sigur 6K) - best pace 6:17/km - TE Base/Aerobic 3.1'},
+  'd-0619':{pace:'6:36',dist:'6.02',hr:'148',hrmax:'162',spm:'163',time:'39:42',note:'Track Blaj - plan respectat (6K) - best pace 5:06/km - cadenta max 170 spm - stride 0.93m - ascensiune 76m eroare senzor (real 0m, pista) - TE Tempo (High Aerobic)/Aerobic 3.6 - Exercise Load 122'},
+  'd-0622':{pace:'7:44',dist:'4.01',hr:'134',hrmax:'142',spm:'164',time:'30:58',note:'S4 deload 1/3 - target puls <130, usor peste (134 avg/142 max) - best pace 6:41/km - cadenta max 169 spm - stride 0.79m - TE Recovery (Low Aerobic)/Aerobic 2.4 - Exercise Load 41 - Perceived Effort 1/10 (Very Light) - Self-eval: Strong'},
+  'd-0624':{pace:'8:23',dist:'4.00',hr:'131',hrmax:'141',spm:'165',time:'33:30',note:'S4 deload 2/3 - puls bine sub target (131 avg/141 max) - best pace 7:19/km - cadenta max 170 spm - stride 0.73m - TE Recovery (Low Aerobic)/Aerobic 2.0 - Exercise Load 27 - sweat loss 450ml'},
+  'd-0626':{pace:'6:39',dist:'4.02',hr:'141',hrmax:'154',spm:'164',time:'26:40',note:'S4 deload 3/3 - Parcul Mare Cluj - tehnica progresiva aplicata (splits 6:52/6:52/6:30/6:21) - mult peste target <130bpm: HR avg141/max154 - timp peste 148bpm: 20.2% (323s, 8 episoade, max 91s) - timp peste 150bpm: 6.3% (101s, 4 episoade, max 52s) - cadenta max 168 spm - stride/calorii/TE indisponibile din GPX, verifica Garmin Connect'},
+  'd-0629':{pace:'6:29',dist:'6.05',hr:'146.5',hrmax:'154',spm:'164',time:'39:16',note:'S5 Run 1/3 - Parcul Mare - splits 6:29/6:07/6:15/6:33/6:35/6:51 (positive split, fade final) - timp peste 148bpm: 60.3% (1421s, 18 episoade, max 431s) - cadenta max 168 spm'},
+  'd-0701':{pace:'7:19',dist:'5.00',hr:'138',hrmax:'147',spm:'165',time:'36:35',note:'S5 Run 2/3 - HR perfect in zona de confort (138 avg/147 max) - cadenta max 169 spm - strides sesiune separata: 4×100m pista Cluj / HR avg132/max161 / best pace 2:32/km (~15km/h) / 1.68km / 15:02 / recuperare mers complet / prima sesiune strides ✓'},
+  'd-0704':{pace:'7:14',dist:'7.05',hr:'138',hrmax:'149',spm:'164',time:'51:03',note:'S5 Run 3/3 Long Run - Parcul Mare Cluj - HR perfect in zona de confort (138 avg/149 max) - cadenta max 168 spm - 0m elevatie'}
+};
+const PRE_PU_DONE = new Set(["d-0602","d-0603","d-0604","d-0605","d-0606","d-0607","d-0608","d-0609","d-0610","d-0611","d-0612","d-0613","d-0614","d-0615","d-0616","d-0617","d-0618","d-0619","d-0620","d-0621","d-0622","d-0623","d-0624","d-0625","d-0626","d-0627","d-0628","d-0629","d-0630","d-0701","d-0702","d-0703","d-0704"]);
+const PRE_RUN_DONE = new Set(["d-0601","d-0603","d-0605","d-0608","d-0610","d-0612","d-0615","d-0617","d-0619","d-0622","d-0624","d-0626","d-0629","d-0701","d-0704"]);
+
+let state = {};
+
+// Storage cu fallback complet
+var _memStore = {};
+var _storage = {
+  getItem: function(k) {
+    // 1. încearcă localStorage
+    try { var v = localStorage.getItem(k); if(v !== null) return v; } catch(e) {}
+    // 2. încearcă cookies
+    try {
+      var name = encodeURIComponent(k) + '=';
+      var ca = document.cookie.split(';');
+      for(var i=0;i<ca.length;i++){
+        var c=ca[i].trim();
+        if(c.indexOf(name)===0) return decodeURIComponent(c.substring(name.length));
+      }
+    } catch(e) {}
+    // 3. fallback memorie
+    return _memStore[k] !== undefined ? _memStore[k] : null;
+  },
+  setItem: function(k, v) {
+    _memStore[k] = v;
+    // 1. încearcă localStorage
+    var lsOk = false;
+    try { localStorage.setItem(k, v); lsOk = true; } catch(e) {}
+    // 2. dacă localStorage a eșuat, salvează în cookie (365 zile)
+    if(!lsOk) {
+      try {
+        var exp = new Date();
+        exp.setFullYear(exp.getFullYear()+1);
+        document.cookie = encodeURIComponent(k)+'='+encodeURIComponent(v)+';expires='+exp.toUTCString()+';path=/;SameSite=Lax';
+      } catch(e) {}
+    }
+  }
+};
+
+var STORAGE_DEGRADED = false;
+var STORAGE_MODE = 'localStorage';
+(function checkStoragePersistence() {
+  try {
+    var testKey = '__leo_persist_test__';
+    localStorage.setItem(testKey, '1');
+    var readBack = localStorage.getItem(testKey);
+    localStorage.removeItem(testKey);
+    if(readBack !== '1') throw new Error();
+  } catch(e) {
+    // încearcă cookies
+    try {
+      document.cookie = '__leo_test__=1;path=/;SameSite=Lax';
+      if(document.cookie.indexOf('__leo_test__')>=0) {
+        STORAGE_MODE = 'cookie';
+      } else {
+        STORAGE_DEGRADED = true;
+        STORAGE_MODE = 'memory';
+      }
+    } catch(e2) {
+      STORAGE_DEGRADED = true;
+      STORAGE_MODE = 'memory';
+    }
+  }
+})();
+
+try { state = JSON.parse(_storage.getItem('leo-run-v3') || '{}'); } catch(e) { state = {}; }
+
+PRE_PU_DONE.forEach(function(id) {
+  if(!state[id]) state[id]={};
+  if(state[id].puDone === undefined) state[id].puDone = true;
+});
+PRE_RUN_DONE.forEach(function(id) {
+  if(!state[id]) state[id]={};
+  if(state[id].done === undefined) state[id].done = true;
+});
+
+function saveState() {
+  try { _storage.setItem('leo-run-v3', JSON.stringify(state)); } catch(e) {}
+}
+
+function getTodayId() {
+  var n = new Date();
+  return 'd-' + String(n.getMonth()+1).padStart(2,'0') + String(n.getDate()).padStart(2,'0');
+}
+var TODAY_ID = getTodayId();
+setInterval(function() { var nid=getTodayId(); if(nid!==TODAY_ID){TODAY_ID=nid;renderAll();} }, 60000);
+
+function isPuDone(id) {
+  // PRE_PU_DONE = hardcoded done days (always shown as done)
+  if(PRE_PU_DONE.has(id)) {
+    // User can only UN-mark them explicitly
+    return !(state[id] && state[id].puDone === false);
+  }
+  // Future days: only done if user marked them
+  return !!(state[id] && state[id].puDone === true);
+}
+function isRunDone(id) { return (state[id] && state[id].done) || PRE_RUN_DONE.has(id); }
+function isRunReviewed(id) { return PRE_RUN_DONE.has(id) || !!(state[id] && state[id].runReviewed === true); }
+function isPuReviewed(id) { return PRE_PU_DONE.has(id) || !!(state[id] && state[id].puReviewed === true); }
+function idNum(id) { return parseInt(id.replace('d-',''), 10); }
+function confirmRun(id, didIt) { if(!state[id]) state[id]={}; state[id].done = !!didIt; state[id].runReviewed = true; saveState(); renderAll(); }
+function confirmPu(id, didIt) { if(!state[id]) state[id]={}; state[id].puDone = !!didIt; state[id].puReviewed = true; saveState(); renderAll(); }
+function getPendingConfirmations() {
+  var out = [];
+  WEEKS.forEach(function(w){ w.days.forEach(function(d){
+    if(idNum(d.id) >= idNum(TODAY_ID)) return; // doar zile mai vechi decat azi
+    var needsRun = d.isRun && !isRunReviewed(d.id);
+    var needsPu = d.pu && d.id!=='d-0601' && !isPuReviewed(d.id);
+    if(needsRun || needsPu) out.push({id:d.id, date:d.date, day:d.day, badge:d.badge, needsRun:needsRun, needsPu:needsPu});
+  });});
+  return out;
+}
+function getCompletionCounts() {
+  var complete=0, incomplete=0;
+  WEEKS.forEach(function(w){ w.days.forEach(function(d){
+    if(idNum(d.id) >= idNum(TODAY_ID)) return;
+    var hasPu = d.pu && d.id!=='d-0601';
+    if(!d.isRun && !hasPu) return;
+    var ok = (!d.isRun || isRunDone(d.id)) && (!hasPu || isPuDone(d.id));
+    if(ok) complete++; else incomplete++;
+  });});
+  return {complete:complete, incomplete:incomplete};
+}
+function getRunData(id) {
+  var s = state[id] || {};
+  return s.run || (PRE_RUNS[id] && !s.cleared ? PRE_RUNS[id] : null);
+}
+function findToday() {
+  for(var i=0;i<WEEKS.length;i++) for(var j=0;j<WEEKS[i].days.length;j++) if(WEEKS[i].days[j].id===TODAY_ID) return {day:WEEKS[i].days[j],week:WEEKS[i]};
+  return null;
+}
+
+var prevPage = 'today';
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.bnav-btn').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('page-'+id).classList.add('on');
+  if(btn) btn.classList.add('on');
+}
+
+function openWorkout(wkKey, from) {
+  prevPage = from || 'today';
+  var wk = WORKOUTS[wkKey];
+  if(!wk) return;
+  document.getElementById('wk-page-title').textContent = wk.title;
+  var html = '';
+  html += '<div class="wk-section"><div class="wk-sec-label" style="color:var(--yellow)">1️⃣ 💪 FLOTARI — ACASA</div><div class="wk-steps">';
+  html += '<div class="wk-step key">Primul lucru dimineata</div>';
+  html += '<div class="wk-step hl">3 seturi x reps conform saptamanii curente</div>';
+  html += '<div class="wk-step">Pauza 60 sec intre seturi</div>';
+  html += '</div></div>';
+
+  html += '<div class="wk-section"><div class="wk-sec-label" style="color:var(--coral)">2️⃣ 🔥 ACTIVARE DINAMICA — ACASA</div><div class="wk-steps">';
+  html += '<div class="wk-step key">Imediat dupa flotari, inainte sa pleci</div>';
+  html += '<div class="wk-step hl">Leg swings fata-spate - 10 per picior</div>';
+  html += '<div class="wk-step hl">Leg swings lateral - 10 per picior</div>';
+  html += '<div class="wk-step hl">Hip circles - 10 per sold</div>';
+  html += '<div class="wk-step hl">Squat usor - 10 repetari</div>';
+  html += '<div class="wk-step">Total: ~3 minute</div>';
+  html += '</div></div>';
+
+  html += '<div class="wk-section"><div class="wk-sec-label" style="color:var(--blue)">3️⃣ 🚶 1.3KM MERS LA TRASEU</div><div class="wk-steps">';
+  html += '<div class="wk-step key">Corp deja activat — pleci spre traseu</div>';
+  html += '<div class="wk-step">Ritm alert, mai rapid decat plimbarea normala</div>';
+  html += '<div class="wk-step">Pulsul ajunge la 100-110 bpm la sosire</div>';
+  html += '<div class="wk-step">Durata: ~15-18 minute</div>';
+  html += '</div></div>';
+
+  var colorMap = {'ALERGARE':'var(--mint)','4× STRIDES':'var(--coral)','TEMPO':'var(--yellow)','RĂCIRE':'var(--purple)'};
+  wk.sections.forEach(function(sec) {
+    if(sec.label === 'ÎNCĂLZIRE') return;
+    var col = colorMap[sec.label] || 'var(--blue)';
+    var secNums = {'ALERGARE':'4️⃣ ','4× STRIDES':'4️⃣ ','TEMPO':'4️⃣ '};
+    var prefix = secNums[sec.label] || '';
+    html += '<div class="wk-section"><div class="wk-sec-label" style="color:'+col+'">'+prefix+sec.icon+' '+sec.label+'</div><div class="wk-steps">';
+    sec.steps.forEach(function(step) {
+      var isKey = step.includes('km') || step.includes('bpm') || step.includes('STRIDE') || step.startsWith('—');
+      html += '<div class="wk-step'+(isKey?' hl':'')+'">'+step+'</div>';
+    });
+    html += '</div></div>';
+  });
+
+  html += '<div class="wk-section"><div class="wk-sec-label" style="color:var(--mint)">5️⃣ 🏠 1.4KM MERS ACASA — COOLDOWN</div><div class="wk-steps">';
+  html += '<div class="wk-step key">1.4 km mers acasa = cooldown natural complet</div>';
+  html += '<div class="wk-step">Ritm lent - pulsul coboara sub 90 bpm</div>';
+  html += '<div class="wk-step hl">Nu te opri brusc dupa run</div>';
+  html += '</div></div>';
+
+  html += '<div class="wk-section" style="margin-bottom:20px;"><div class="wk-sec-label" style="color:var(--purple)">6️⃣ 🧘 STRETCHING ACASA</div><div class="wk-steps">';
+  html += '<div class="wk-step hl">Stretch gambe - 30 sec per picior (mana in perete)</div>';
+  html += '<div class="wk-step hl">Stretch quads - 30 sec per picior (calcai la fesa)</div>';
+  html += '<div class="wk-step hl">Stretch flexori sold - 30 sec per parte (fandare)</div>';
+  html += '<div class="wk-step hl">Stretch ischiogambieri - 30 sec per picior</div>';
+  html += '<div class="wk-step">Long run: adauga fesieri 45 sec per parte</div>';
+  html += '</div></div>';
+
+  document.getElementById('wk-content').innerHTML = html;
+  showPage('workout', null);
+}
+
+function goBack() {
+  var btn = document.querySelector('.bnav-btn[onclick*="'+prevPage+'"]');
+  showPage(prevPage, btn);
+}
+
+function renderToday() {
+  var now = new Date();
+  var days = ['Duminica','Luni','Marti','Miercuri','Joi','Vineri','Sambata'];
+  var months = ['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie','Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'];
+  document.getElementById('hero-date').innerHTML = days[now.getDay()] + ', <span>' + now.getDate() + ' ' + months[now.getMonth()] + '</span>';
+  var wi = WEEKS.findIndex(function(w){return w.days.some(function(d){return d.id===TODAY_ID;});});
+  document.getElementById('hero-sub').textContent = 'Saptamana ' + (wi+1) + ' din 12';
+
+  var found = findToday();
+  var el = document.getElementById('today-content');
+  if(!found) { el.innerHTML = '<div style="padding:40px 16px;text-align:center;color:var(--muted);font-size:15px;">Plan finalizat! 🎉</div>'; return; }
+  var warnHtml = '';
+  if(STORAGE_DEGRADED) {
+    warnHtml = '<div style="margin:0 16px 12px;background:rgba(255,95,87,0.12);border:1px solid var(--coral);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--coral);font-weight:700;">⚠️ Salvarea NU funcționează (localStorage + cookies blocate). Tot ce bifezi se pierde la închidere. Fix: deploy GitHub Pages.</div>';
+  } else if(STORAGE_MODE==='cookie') {
+    warnHtml = '<div style="margin:0 16px 12px;background:rgba(255,184,0,0.1);border:1px solid var(--yellow);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--yellow);font-weight:700;">⚠️ Salvare prin cookies (localStorage blocat). Funcționează, dar mai fragil. Fix definitiv: deploy GitHub Pages.</div>';
+  }
+  var day = found.day, week = found.week;
+  var done = isRunDone(day.id);
+  var runData = getRunData(day.id);
+  var puDone = isPuDone(day.id);
+
+  var html = '';
+  var cardBg = day.isRun ? (done ? 'linear-gradient(135deg,#00A676 0%,#00C896 100%)' : 'linear-gradient(135deg,#FF5F57 0%,#FF8A65 100%)') : 'linear-gradient(135deg,#1E3A5F 0%,#2D9CDB 100%)';
+  html += '<div class="today-hero" style="background:'+cardBg+'">';
+  html += '<div class="today-label">'+week.label+' · '+week.dates+'</div>';
+  html += '<div class="today-title">'+day.badge+'</div>';
+  if(day.detail && !runData) html += '<div class="today-meta">'+day.detail+'</div>';
+  html += '<div class="today-btns">';
+  if(day.isRun) {
+    if(day.wk) html += '<button class="btn btn-white btn-sm" onclick="openWorkout(\''+day.wk+'\',\'today\')">📋 Detalii</button>';
+    if(!done) html += '<button class="btn btn-ghost btn-sm" onclick="markDone(\''+day.id+'\')">✓ Done</button>';
+    html += '<button class="btn btn-ghost btn-sm" onclick="openLog(\''+day.id+'\',\''+day.date+'\')">'+(done?'✏️ Edit':'+ Log')+'</button>';
+  }
+  html += '</div></div>';
+
+  if(runData) {
+    html += '<div class="logged-pill">';
+    if(runData.pace) html += '<div class="logged-row">⏱ '+runData.pace+'/km · '+(runData.dist||'')+'km · '+(runData.time||'')+'</div>';
+    if(runData.hr) html += '<div class="logged-row">💓 '+runData.hr+'↑'+(runData.hrmax||'')+' bpm · 👟 '+(runData.spm||'')+' spm</div>';
+    if(runData.note) html += '<div class="logged-row" style="color:var(--muted)">📝 '+runData.note+'</div>';
+    html += '</div>';
+  }
+
+  var totalKm = 0;
+  WEEKS.forEach(function(w){w.days.forEach(function(d){if(d.isRun){var r=getRunData(d.id);if(r&&r.dist) totalKm+=parseFloat(r.dist);}});});
+  var doneRuns = 0;
+  WEEKS.forEach(function(w){w.days.forEach(function(d){if(d.isRun&&isRunDone(d.id)) doneRuns++;});});
+
+  html += '<div class="metrics">';
+  html += '<div class="metric-card"><div class="metric-val" style="color:var(--coral)">'+totalKm.toFixed(1)+'</div><div class="metric-label">km total</div></div>';
+  html += '<div class="metric-card"><div class="metric-val" style="color:var(--mint)">'+doneRuns+'</div><div class="metric-label">runs done</div></div>';
+  html += '<div class="metric-card"><div class="metric-val" style="color:var(--blue)">'+(wi+1)+'/12</div><div class="metric-label">saptamana</div></div>';
+  html += '</div>';
+
+  if(day.pu) {
+    html += '<div class="pu-card">';
+    html += '<div class="pu-top"><div><div class="pu-label">Flotari azi</div><div class="pu-badge">'+day.pu+'</div></div>';
+    html += '<button class="btn '+(puDone?'btn-mint':'btn-outline-coral')+'" onclick="togglePu(\''+day.id+'\')">'+(puDone?'✅ Facut':'○ Marcheaza')+'</button></div>';
+    html += '<div style="font-size:12px;color:'+(puDone?'var(--mint)':'var(--muted)')+';font-weight:700;">'+(puDone?'Flotarile bifate! 🔥':'Apasa dupa ce termini seturile.')+'</div>';
+    html += '</div>';
+  }
+
+  el.innerHTML = warnHtml + html;
+}
+
+var selWeek = -1;
+function renderPlan() {
+  var ci = WEEKS.findIndex(function(w){return w.days.some(function(d){return d.id===TODAY_ID;});});
+  if(selWeek < 0 && ci >= 0) selWeek = ci;
+  if(selWeek < 0) selWeek = 0;
+  document.getElementById('week-strip').innerHTML = WEEKS.map(function(w,i){
+    var allDone = w.days.filter(function(d){return d.isRun;}).every(function(d){return isRunDone(d.id);});
+    var cls = 'wchip' + (i===selWeek?' on':(allDone?' done':''));
+    return '<div class="'+cls+'" onclick="selWeek='+i+';renderPlan()">'+w.label+'</div>';
+  }).join('');
+  var week = WEEKS[selWeek];
+  document.getElementById('week-days').innerHTML = week.days.map(function(day){
+    var done = isRunDone(day.id);
+    var puDone = isPuDone(day.id);
+    var isToday = day.id===TODAY_ID;
+    var runData = getRunData(day.id);
+    var cls = 'day-card'+(isToday?' today':(done&&day.isRun?' done':''));
+    var badgeCol = day.isRun?(done?'var(--mint)':'var(--coral)'):'var(--muted)';
+    return '<div class="'+cls+'"><div class="day-date-block"><div class="day-dow">'+day.day+'</div><div class="day-num">'+day.date.split(' ')[0]+'</div></div>'
+      +'<div class="day-content"><div class="day-badge-text" style="color:'+badgeCol+'">'+day.badge+'</div>'
+      +(runData?'<div class="day-run-result">'+runData.pace+'/km · '+runData.hr+'bpm · '+runData.spm+'spm</div>':(day.detail?'<div class="day-meta-text">'+day.detail+'</div>':''))
+      +(day.pu?'<div class="day-pu-mini" onclick="togglePu(\''+day.id+'\');renderPlan();" style="cursor:pointer;">💪 '+day.pu+' '+(puDone?'✅':'○')+'</div>':'')+'</div>'
+      +'<div class="day-actions">'
+      +(day.wk?'<button class="btn btn-card btn-sm btn-icon" onclick="openWorkout(\''+day.wk+'\',\'plan\')">📋</button>':'')
+      +(day.isRun&&!done?'<button class="btn btn-mint btn-sm btn-icon" onclick="markDone(\''+day.id+'\')">✓</button>':'')
+      +(day.isRun&&done?'<button class="btn btn-card btn-sm btn-icon" onclick="openLog(\''+day.id+'\',\''+day.date+'\')">✏️</button>':'')
+      +'</div></div>';
+  }).join('');
+}
+
+var statsTab = 'overview';
+function switchStatsTab(tab, btn) {
+  statsTab = tab;
+  document.querySelectorAll('.stats-tab').forEach(function(b){b.classList.remove('on');});
+  if(btn) btn.classList.add('on');
+  renderStats();
+}
+
+function renderStats() {
+  if(statsTab === 'overview') renderStatsOverview();
+  else if(statsTab === 'history') renderStatsHistory();
+  else if(statsTab === 'progress') renderStatsProgress();
+  else if(statsTab === 'check') renderStatsCheck();
+}
+
+function getStatsBase() {
+  var wi = WEEKS.findIndex(function(w){return w.days.some(function(d){return d.id===TODAY_ID;});});
+  var totalKm=0, doneRuns=0, totalPu=0, totalPuAll=0, totalRuns=0, totalPuReps=0, allRuns=[];
+  WEEKS.forEach(function(w){w.days.forEach(function(d){
+    if(d.isRun){
+      totalRuns++;
+      var r=getRunData(d.id);
+      if(r&&r.dist) totalKm+=parseFloat(r.dist);
+      if(isRunDone(d.id)){
+        doneRuns++;
+        if(r) allRuns.push({id:d.id,date:d.date,badge:d.badge,wk:d.wk,pace:r.pace,hr:r.hr?parseInt(r.hr):null,hrmax:r.hrmax?parseInt(r.hrmax):null,spm:r.spm?parseInt(r.spm):null,dist:r.dist?parseFloat(r.dist):null,time:r.time||null,note:r.note||null});
+      }
+    }
+    if(d.pu&&d.id!=='d-0601'){
+      totalPuAll++;
+      if(isPuDone(d.id)){
+        totalPu++;
+        var m = d.pu.match(/(\d+)\s*[x×]\s*(\d+)/i);
+        if(m) totalPuReps += parseInt(m[1])*parseInt(m[2]);
+      }
+    }
+  });});
+  return {wi:wi,totalKm:totalKm,doneRuns:doneRuns,totalPu:totalPu,totalPuAll:totalPuAll,totalRuns:totalRuns,totalPuReps:totalPuReps,allRuns:allRuns};
+}
+
+function hrZoneInfo(hr) {
+  if(!hr) return {z:'—',c:'var(--muted)',cls:''};
+  if(hr <= 135) return {z:'Z2',c:'var(--blue)',cls:'z2'};
+  if(hr <= 152) return {z:'Z3',c:'var(--mint)',cls:'z3'};
+  if(hr <= 165) return {z:'Z4',c:'var(--yellow)',cls:'z4'};
+  return {z:'Z5',c:'var(--coral)',cls:'z5'};
+}
+function spmColor(spm) {
+  if(!spm) return 'var(--muted)';
+  if(spm >= 170) return 'var(--mint)';
+  if(spm >= 160) return 'var(--blue)';
+  if(spm >= 150) return 'var(--yellow)';
+  return 'var(--coral)';
+}
+function paceToSec(pace) {
+  if(!pace) return 0;
+  var p = pace.split(':');
+  return parseInt(p[0])*60 + parseInt(p[1]||0);
+}
+
+function renderStatsOverview() {
+  var b = getStatsBase();
+  var pctKm = Math.round((b.totalKm/196)*100);
+  var html = '';
+  html += '<div class="stats-hero"><div class="stats-title">📊 Progres General</div><div class="stats-big-row">';
+  html += '<div class="stat-big"><div class="stat-big-val" style="color:var(--coral)">'+b.totalKm.toFixed(1)+'<span style="font-size:16px;color:rgba(255,255,255,0.4)">/196</span></div><div class="stat-big-label">km alergati</div></div>';
+  html += '<div class="stat-big"><div class="stat-big-val" style="color:var(--mint)">'+b.doneRuns+'<span style="font-size:16px;color:rgba(255,255,255,0.4)">/'+b.totalRuns+'</span></div><div class="stat-big-label">runs done</div></div>';
+  html += '<div class="stat-big"><div class="stat-big-val" style="color:var(--yellow)">'+b.totalPu+'<span style="font-size:16px;color:rgba(255,255,255,0.4)">/'+b.totalPuAll+'</span></div><div class="stat-big-label">zile flotari</div></div>';
+  html += '<div class="stat-big"><div class="stat-big-val" style="color:var(--blue)">'+pctKm+'%</div><div class="stat-big-label">target km</div></div>';
+  html += '<div class="stat-big"><div class="stat-big-val" style="color:var(--yellow)">'+b.totalPuReps+'</div><div class="stat-big-label">flotari total (reps)</div></div>';
+  html += '</div></div>';
+
+  // Quick run table
+  if(b.allRuns.length > 0) {
+    html += '<div class="sec-head">📈 Ultimele Runs</div>';
+    html += '<div style="padding:0 16px;overflow-x:auto;margin-bottom:4px;">';
+    html += '<table style="width:100%;border-collapse:collapse;font-family:DM Mono,monospace;font-size:11px;">';
+    html += '<tr style="color:var(--muted);border-bottom:1px solid var(--border);">';
+    html += '<td style="padding:6px 8px 6px 0;">Data</td><td style="padding:6px 8px;text-align:center;">Dist</td><td style="padding:6px 8px;text-align:center;">Pace</td><td style="padding:6px 8px;text-align:center;">HR avg</td><td style="padding:6px 8px;text-align:center;">HR max</td><td style="padding:6px 8px;text-align:center;">SPM</td>';
+    html += '</tr>';
+    b.allRuns.slice().reverse().forEach(function(r) {
+      var zone = hrZoneInfo(r.hr);
+      var zmx = hrZoneInfo(r.hrmax);
+      var sc = spmColor(r.spm);
+      html += '<tr style="border-bottom:1px solid var(--border);">';
+      html += '<td style="padding:7px 8px 7px 0;color:var(--light)">'+r.date+'</td>';
+      html += '<td style="padding:7px 8px;text-align:center;color:var(--white)">'+(r.dist?r.dist+'km':'—')+'</td>';
+      html += '<td style="padding:7px 8px;text-align:center;color:var(--white)">'+(r.pace||'—')+'</td>';
+      html += '<td style="padding:7px 8px;text-align:center;"><span style="color:'+zone.c+'">'+(r.hr||'—')+'</span><br><span style="font-size:9px;color:'+zone.c+'">'+zone.z+'</span></td>';
+      html += '<td style="padding:7px 8px;text-align:center;"><span style="color:'+zmx.c+'">'+(r.hrmax||'—')+'</span><br><span style="font-size:9px;color:'+zmx.c+'">'+zmx.z+'</span></td>';
+      html += '<td style="padding:7px 8px;text-align:center;color:'+sc+'">'+(r.spm||'—')+'</td>';
+      html += '</tr>';
+    });
+    html += '</table></div>';
+
+    if(b.allRuns.length >= 2) {
+      var first = b.allRuns[0], last = b.allRuns[b.allRuns.length-1];
+      html += '<div style="margin:0 16px 4px;background:var(--card);border-radius:12px;padding:12px 14px;">';
+      html += '<div class="sec-head" style="padding:0 0 8px;font-size:11px;">📊 Trend ' + first.date + ' → ' + last.date + '</div>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">';
+      if(first.hr && last.hr) {
+        var hrDiff = last.hr - first.hr;
+        var hrCol = hrDiff <= 0 ? 'var(--mint)' : 'var(--coral)';
+        html += '<div><div style="font-family:DM Mono,monospace;font-size:18px;font-weight:700;color:'+hrCol+'">'+(hrDiff>0?'+':'')+hrDiff+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">HR avg bpm</div></div>';
+      }
+      if(first.hrmax && last.hrmax) {
+        var hmDiff = last.hrmax - first.hrmax;
+        var hmCol = hmDiff <= 0 ? 'var(--mint)' : 'var(--yellow)';
+        html += '<div><div style="font-family:DM Mono,monospace;font-size:18px;font-weight:700;color:'+hmCol+'">'+(hmDiff>0?'+':'')+hmDiff+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">HR max bpm</div></div>';
+      }
+      if(first.spm && last.spm) {
+        var spmDiff = last.spm - first.spm;
+        var spmCol = spmDiff >= 0 ? 'var(--mint)' : 'var(--coral)';
+        html += '<div><div style="font-family:DM Mono,monospace;font-size:18px;font-weight:700;color:'+spmCol+'">'+(spmDiff>0?'+':'')+spmDiff+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">SPM</div></div>';
+      }
+      html += '</div></div>';
+    }
+  }
+  html += '<div style="height:16px;"></div>';
+  document.getElementById('stats-content').innerHTML = html;
+}
+
+function renderStatsHistory() {
+  var b = getStatsBase();
+  var html = '';
+
+  if(b.allRuns.length === 0) {
+    html += '<div style="padding:40px 16px;text-align:center;color:var(--muted);font-size:15px;">Niciun run logat încă. 🏃</div>';
+    document.getElementById('stats-content').innerHTML = html;
+    return;
+  }
+
+  // Pace chart vizual
+  var runs = b.allRuns.filter(function(r){return r.pace;});
+  if(runs.length >= 2) {
+    var paces = runs.map(function(r){return paceToSec(r.pace);});
+    var maxPace = Math.max.apply(null, paces);
+    var minPace = Math.min.apply(null, paces);
+    var range = maxPace - minPace || 1;
+    html += '<div class="pace-chart">';
+    html += '<div class="pace-chart-title">📉 Evoluție Pace (mai mic = mai rapid)</div>';
+    html += '<div class="pace-chart-bars">';
+    runs.forEach(function(r,i) {
+      var sec = paceToSec(r.pace);
+      // Invert: fastest = tallest bar
+      var heightPct = Math.round(((maxPace - sec) / range) * 80) + 20;
+      var barCol = i === runs.length-1 ? 'var(--coral)' : 'var(--border)';
+      if(sec === minPace) barCol = 'var(--mint)';
+      html += '<div class="pace-bar-wrap">';
+      html += '<div style="flex:1;display:flex;align-items:flex-end;">';
+      html += '<div class="pace-bar" style="height:'+heightPct+'%;background:'+barCol+';width:100%;border-radius:4px 4px 0 0;"></div>';
+      html += '</div>';
+      html += '<div class="pace-bar-label" style="color:'+(i===runs.length-1?'var(--coral)':'var(--muted)')+'">'+r.pace+'</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<div style="display:flex;justify-content:space-between;margin-top:4px;">';
+    html += '<span style="font-size:9px;color:var(--muted)">'+runs[0].date+'</span>';
+    html += '<span style="font-size:9px;color:var(--muted)">'+runs[runs.length-1].date+'</span>';
+    html += '</div>';
+    html += '</div>';
+  }
+
+  // Cards pentru fiecare run (invers cronologic)
+  html += '<div class="sec-head">Toate Runurile ('+ b.allRuns.length +')</div>';
+  var reversed = b.allRuns.slice().reverse();
+  reversed.forEach(function(r, i) {
+    var zone = hrZoneInfo(r.hr);
+    var zoneMax = hrZoneInfo(r.hrmax);
+    var sc = spmColor(r.spm);
+    // Determine run type label
+    var typeLabel = r.badge || '—';
+    html += '<div class="run-hist-card '+zone.cls+'">';
+    html += '<div class="run-hist-header">';
+    html += '<div><div class="run-hist-date">Run #'+(b.allRuns.length - i)+' · '+r.date+'</div><div class="run-hist-type">'+typeLabel+'</div></div>';
+    html += '<div style="text-align:right;"><div class="run-hist-dist">'+(r.dist||'—')+'<span>km</span></div>';
+    if(r.time) html += '<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--muted);margin-top:2px;">⏱ '+r.time+'</div>';
+    html += '</div></div>';
+    // Metrics grid
+    html += '<div class="run-hist-metrics">';
+    // Pace
+    html += '<div class="run-hist-metric"><div class="run-hist-mval" style="color:var(--coral)">'+(r.pace||'—')+'</div><div class="run-hist-mlabel">pace/km</div></div>';
+    // HR avg + zone
+    html += '<div class="run-hist-metric"><div class="run-hist-mval" style="color:'+zone.c+'">'+(r.hr||'—')+'</div><div class="run-hist-mlabel">HR avg · '+zone.z+'</div></div>';
+    // HR max + zone
+    html += '<div class="run-hist-metric"><div class="run-hist-mval" style="color:'+zoneMax.c+'">'+(r.hrmax||'—')+'</div><div class="run-hist-mlabel">HR max · '+zoneMax.z+'</div></div>';
+    // SPM
+    html += '<div class="run-hist-metric"><div class="run-hist-mval" style="color:'+sc+'">'+(r.spm||'—')+'</div><div class="run-hist-mlabel">cadență spm</div></div>';
+    // Dist bar visual (target 10km = 100%)
+    var distPct = r.dist ? Math.min(Math.round((r.dist/10)*100), 100) : 0;
+    html += '<div class="run-hist-metric" style="grid-column:span 2;">';
+    html += '<div style="display:flex;align-items:center;gap:8px;">';
+    html += '<div style="flex:1;background:var(--border);border-radius:4px;height:6px;"><div style="width:'+distPct+'%;height:6px;border-radius:4px;background:var(--coral);"></div></div>';
+    html += '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--muted);">'+distPct+'% of 10K</div>';
+    html += '</div><div class="run-hist-mlabel" style="margin-top:4px;">distanță</div>';
+    html += '</div>';
+    html += '</div>';
+    // Note
+    if(r.note) html += '<div class="run-hist-note">📝 '+r.note+'</div>';
+    html += '</div>';
+  });
+
+  // Comparison stats footer
+  if(b.allRuns.length >= 2) {
+    var withPace = b.allRuns.filter(function(r){return r.pace;});
+    var withSpm = b.allRuns.filter(function(r){return r.spm;});
+    var bestPaceRun = withPace.reduce(function(a,b){return paceToSec(a.pace)<paceToSec(b.pace)?a:b;}, withPace[0]);
+    var bestSpmRun = withSpm.reduce(function(a,b){return a.spm>b.spm?a:b;}, withSpm[0]);
+    var avgHr = Math.round(b.allRuns.filter(function(r){return r.hr;}).reduce(function(s,r){return s+r.hr;},0) / b.allRuns.filter(function(r){return r.hr;}).length);
+    html += '<div style="margin:0 16px 4px;background:var(--card);border-radius:14px;padding:14px;">';
+    html += '<div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;">🏆 Best Performances</div>';
+    html += '<div style="display:flex;flex-direction:column;gap:8px;">';
+    if(bestPaceRun) html += '<div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:var(--muted);">⚡ Cel mai rapid</span><span style="font-family:DM Mono,monospace;font-size:15px;color:var(--mint);">'+bestPaceRun.pace+'/km <span style="font-size:11px;color:var(--muted)">'+bestPaceRun.date+'</span></span></div>';
+    if(bestSpmRun) html += '<div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:var(--muted);">👟 Cel mai bun SPM</span><span style="font-family:DM Mono,monospace;font-size:15px;color:var(--blue);">'+bestSpmRun.spm+' spm <span style="font-size:11px;color:var(--muted)">'+bestSpmRun.date+'</span></span></div>';
+    if(avgHr) html += '<div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:var(--muted);">💓 HR mediu overall</span><span style="font-family:DM Mono,monospace;font-size:15px;color:var(--yellow);">'+avgHr+' bpm</span></div>';
+    html += '</div></div>';
+  }
+
+  html += '<div style="height:16px;"></div>';
+  document.getElementById('stats-content').innerHTML = html;
+}
+
+function ringsSVG(size, items) {
+  var c = size/2;
+  var sw = size*0.11;
+  var gap = sw*0.4;
+  var svg = '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">';
+  items.forEach(function(it, i){
+    var r = c - sw/2 - i*(sw+gap);
+    if(r<=0) return;
+    var circ = 2*Math.PI*r;
+    var pct = Math.max(0, Math.min(100, it.pct));
+    var dash = circ*pct/100;
+    svg += '<circle cx="'+c+'" cy="'+c+'" r="'+r+'" stroke="'+it.color+'" stroke-opacity="0.16" stroke-width="'+sw+'" fill="none"/>';
+    if(pct>0) svg += '<circle cx="'+c+'" cy="'+c+'" r="'+r+'" stroke="'+it.color+'" stroke-width="'+sw+'" fill="none" stroke-linecap="round" stroke-dasharray="'+dash+' '+circ+'" transform="rotate(-90 '+c+' '+c+')"/>';
+  });
+  svg += '</svg>';
+  return svg;
+}
+
+function renderStatsProgress() {
+  var b = getStatsBase();
+  var runPctAll = b.totalRuns ? (b.doneRuns/b.totalRuns*100) : 0;
+  var puPctAll = b.totalPuAll ? (b.totalPu/b.totalPuAll*100) : 0;
+
+  var html = '';
+  // ── Widget principal (gen Apple "Today") ──
+  html += '<div class="stats-hero" style="display:flex;align-items:center;gap:18px;">';
+  html += '<div style="flex-shrink:0;">'+ringsSVG(96,[{pct:runPctAll,color:'var(--mint)'},{pct:puPctAll,color:'var(--yellow)'}])+'</div>';
+  html += '<div style="flex:1;">';
+  html += '<div class="stats-title" style="margin-bottom:8px;">Progres Total</div>';
+  html += '<div style="display:flex;align-items:center;gap:6px;font-size:13px;margin-bottom:4px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--mint);display:inline-block;"></span><span style="color:var(--white);font-weight:700;">'+b.doneRuns+'/'+b.totalRuns+'</span><span style="color:var(--muted);">runs</span></div>';
+  html += '<div style="display:flex;align-items:center;gap:6px;font-size:13px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--yellow);display:inline-block;"></span><span style="color:var(--white);font-weight:700;">'+b.totalPu+'/'+b.totalPuAll+'</span><span style="color:var(--muted);">zile flotări</span></div>';
+  html += '</div></div>';
+
+  // ── Grid compact pe săptămâni ──
+  html += '<div class="sec-head">Pe Săptămâni</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px 16px;">';
+  WEEKS.forEach(function(w, i) {
+    var isCur = i === b.wi;
+    var runs = w.days.filter(function(d){return d.isRun;});
+    var doneRuns = runs.filter(function(d){return isRunDone(d.id);});
+    var puDays = w.days.filter(function(d){return d.pu && d.id!=='d-0601';});
+    var donePu = puDays.filter(function(d){return isPuDone(d.id);});
+    var runPct = runs.length ? (doneRuns.length/runs.length*100) : 0;
+    var puPct = puDays.length ? (donePu.length/puDays.length*100) : 0;
+    var wkNum = w.label.match(/S(\d+)/);
+
+    html += '<div style="background:var(--card);border-radius:12px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;'+(isCur?'border:1.5px solid var(--blue);':'')+'">';
+    html += ringsSVG(48,[{pct:runPct,color:'var(--mint)'},{pct:puPct,color:'var(--yellow)'}]);
+    html += '<div style="font-size:11px;font-weight:800;color:'+(isCur?'var(--blue)':'var(--white)')+';">'+(wkNum?'S'+wkNum[1]:w.label)+'</div>';
+    html += '</div>';
+  });
+  html += '</div><div style="height:8px;"></div>';
+  document.getElementById('stats-content').innerHTML = html;
+}
+
+function renderStatsCheck() {
+  var c = getCompletionCounts();
+  var pending = getPendingConfirmations();
+  var html = '';
+
+  // widget simplu complete vs incomplete
+  html += '<div class="stats-hero"><div class="stats-title">⚠️ Verificare Zile</div>';
+  if(c.incomplete === 0) {
+    html += '<div style="text-align:center;padding:8px 0;">';
+    html += '<div style="font-size:32px;">🎉</div>';
+    html += '<div style="font-size:16px;font-weight:800;color:var(--mint);margin-top:4px;">Perfect! Toate zilele sunt complete!</div>';
+    html += '<div style="font-size:12px;color:var(--muted);margin-top:2px;">'+c.complete+' din '+c.complete+' zile confirmate</div>';
+    html += '</div>';
+  } else {
+    html += '<div style="display:flex;gap:16px;justify-content:center;padding:6px 0;">';
+    html += '<div style="text-align:center;"><div style="font-size:28px;font-weight:900;color:var(--mint);">'+c.complete+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;">zile complete</div></div>';
+    html += '<div style="text-align:center;"><div style="font-size:28px;font-weight:900;color:var(--coral);">'+c.incomplete+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;">zile incomplete</div></div>';
+    html += '</div>';
+  }
+  html += '</div>';
+
+  if(pending.length === 0) {
+    html += '<div style="padding:0 16px;color:var(--muted);font-size:13px;text-align:center;margin-top:8px;">Nicio zi neconfirmată ✅</div>';
+  } else {
+    html += '<div class="sec-head">De confirmat ('+pending.length+')</div>';
+    html += '<div style="padding:0 16px;display:flex;flex-direction:column;gap:8px;margin-bottom:8px;">';
+    pending.forEach(function(p){
+      html += '<div style="background:var(--card);border-radius:10px;padding:10px 12px;">';
+      html += '<div style="font-size:12px;font-weight:800;color:var(--white);margin-bottom:8px;">'+p.day+' '+p.date+' <span style="font-weight:400;color:var(--muted);">· '+p.badge+'</span></div>';
+      if(p.needsRun) {
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">';
+        html += '<span style="font-size:12px;color:var(--muted);">🏃 Ai alergat?</span>';
+        html += '<span style="display:flex;gap:6px;">';
+        html += '<button class="btn btn-mint btn-sm" onclick="confirmRun(\''+p.id+'\',true)">✅ Da</button>';
+        html += '<button class="btn btn-outline-coral btn-sm" onclick="confirmRun(\''+p.id+'\',false)">❌ Nu</button>';
+        html += '</span></div>';
+      }
+      if(p.needsPu) {
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
+        html += '<span style="font-size:12px;color:var(--muted);">💪 Ai făcut flotări?</span>';
+        html += '<span style="display:flex;gap:6px;">';
+        html += '<button class="btn btn-mint btn-sm" onclick="confirmPu(\''+p.id+'\',true)">✅ Da</button>';
+        html += '<button class="btn btn-outline-coral btn-sm" onclick="confirmPu(\''+p.id+'\',false)">❌ Nu</button>';
+        html += '</span></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+  html += '<div style="height:16px;"></div>';
+  document.getElementById('stats-content').innerHTML = html;
+}
+
+
+function renderRules() {
+  var rules = [
+    {icon:'🔋',col:'var(--blue)',title:'Body Battery',text:'Sub <strong>60</strong> dimineata = mers, nu run. RHR +7 bpm = supraantrenament.'},
+    {icon:'👟',col:'var(--mint)',title:'Cadenta Tinta',text:'<strong>S1-4: 155+</strong> · <strong>S5-8: 160+</strong> · <strong>S9-12: 165+ spm</strong>.'},
+    {icon:'💪',col:'var(--yellow)',title:'Flotari Zilnic',text:'Dimineata, inainte de run. Nu cresti reps pana setul devine lejer.'},
+    {icon:'🗺️',col:'var(--purple)',title:'Structura Zilei',text:'Flotari → <strong>1.3km mers</strong> la traseu → activare → run → <strong>1.4km mers</strong> acasa → stretching.'},
+    {icon:'⚠️',col:'var(--coral)',title:'Semnal Stop',text:'Durere <strong>ascutita</strong> genunchi sau tendon = stop + odihna 48h.'},
+    {icon:'💧',col:'var(--blue)',title:'Hidratare',text:'<strong>2.000-2.500ml/zi</strong>. Zile cu run: +500ml extra.'},
+    {icon:'🏁',col:'var(--mint)',title:'Obiectiv Final',text:'<strong>24 August 2026 - 10K continuu</strong>. Pace tinta: 6:30-7:00/km.'},
+  ];
+  document.getElementById('rules-content').innerHTML = rules.map(function(r){
+    return '<div class="rule-card"><div class="rule-icon" style="color:'+r.col+'">'+r.icon+'</div><div><div class="rule-title" style="color:'+r.col+'">'+r.title+'</div><div class="rule-text">'+r.text+'</div></div></div>';
+  }).join('');
+}
+
+function markDone(id) { if(!state[id]) state[id]={}; state[id].done=true; state[id].runReviewed=true; saveState(); renderAll(); }
+function togglePu(id) {
+  if(!state[id]) state[id]={};
+  var cur = isPuDone(id);
+  state[id].puDone = !cur;
+  state[id].puReviewed = true;
+  saveState(); renderAll();
+}
+
+var curLogId = '';
+function openLog(id, dateLabel) {
+  curLogId = id;
+  document.getElementById('log-sub').textContent = dateLabel;
+  var data = getRunData(id) || {};
+  ['pace','dist','hr','hrmax','spm','time','note'].forEach(function(f){ document.getElementById('lf-'+f).value = data[f]||''; });
+  document.getElementById('log-modal').style.display = 'flex';
+}
+function closeLog() { document.getElementById('log-modal').style.display = 'none'; }
+function saveLog() {
+  if(!state[curLogId]) state[curLogId]={};
+  state[curLogId].done = true; state[curLogId].cleared = false; state[curLogId].runReviewed = true;
+  state[curLogId].run = {};
+  ['pace','dist','hr','hrmax','spm','time','note'].forEach(function(f){ state[curLogId].run[f] = document.getElementById('lf-'+f).value; });
+  saveState(); closeLog(); renderAll();
+}
+
+function renderAll() { renderToday(); renderPlan(); renderStats(); renderRules(); }
+renderAll();
+
+// ─── SERVICE WORKER (PWA) ────────────────────────────────
+if('serviceWorker' in navigator) {
+  var swCode = `
+const CACHE = 'run-leo-v1';
+const ASSETS = [self.location.pathname];
+self.addEventListener('install', function(e) {
+  e.waitUntil(caches.open(CACHE).then(function(c){ return c.addAll(ASSETS); }));
+  self.skipWaiting();
+});
+self.addEventListener('activate', function(e) {
+  e.waitUntil(caches.keys().then(function(keys){
+    return Promise.all(keys.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));
+  }));
+  self.clients.claim();
+});
+self.addEventListener('fetch', function(e) {
+  if(e.request.method !== 'GET') return;
+  e.respondWith(caches.match(e.request).then(function(cached){
+    var fresh = fetch(e.request).then(function(resp){
+      if(resp.ok) { var c = resp.clone(); caches.open(CACHE).then(function(cache){cache.put(e.request,c);}); }
+      return resp;
+    }).catch(function(){ return cached; });
+    return cached || fresh;
+  }));
+});
+`;
+  var swBlob = new Blob([swCode], {type:'application/javascript'});
+  var swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(function(){});
+}
+</script>
+</body>
+</html>
